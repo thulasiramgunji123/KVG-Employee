@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Productive Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: Center;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"], input[type="date"] {
+            padding: 5px;
+            width: 150px;
+        }
+        button {
+            padding: 8px;
+            margin-right: 10px;
+        }
+        /* Style for the logo */
+        .logo {
+            width:320px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+            display: block;
+            margin: 0 auto;
+         }
+         h1 {
+            text-align: center;
+         }
+
+    </style>
+</head>
+<body>
+
+    <!-- Logo -->
+    <img src="knowvisory-logo.png" alt="Logo" class="logo">
+
+    <h1>Employee Productive Tracker</h1>
+
+
+    <label for="employeeId">Employee ID:</label>
+    <input type="text" id="employeeId">
+
+    <label for="employeeName">Employee Name:</label>
+    <input type="text" id="employeeName">
+
+    <label for="datePicker">Date:</label>
+    <input type="date" id="datePicker">
+
+    <table id="activityTable">
+        <thead>
+            <tr>
+                <th>Activity Performed</th>
+                <th>Client Name</th>
+                <th>Quantity/Units</th>
+                <th>Time Spent</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Activity data will be added dynamically here -->
+        </tbody>
+    </table>
+
+    <button onclick="addActivityRow()">Add Activity</button>
+    <button onclick="clearFields()">Clear</button>
+    <button onclick="submitData()">Submit</button>
+    <button onclick="logout()" style="float: right; margin-top: 10px;">Logout</button>
+
+    <script>
+        function addActivityRow() {
+            var newRow = document.getElementById("activityTable").getElementsByTagName('tbody')[0].insertRow(-1);
+
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+            var activityPerformedInput = document.createElement("input");
+            activityPerformedInput.type = "text";
+            activityPerformedInput.placeholder = "Activity Performed";
+            cell1.appendChild(activityPerformedInput);
+
+            var clientNameInput = document.createElement("input");
+            clientNameInput.type = "text";
+            clientNameInput.placeholder = "Client Name";
+            cell2.appendChild(clientNameInput);
+
+            var quantityUnitsInput = document.createElement("input");
+            quantityUnitsInput.type = "text";
+            quantityUnitsInput.placeholder = "Quantity/Units";
+            cell3.appendChild(quantityUnitsInput);
+
+            var timeSpentInput = document.createElement("input");
+            timeSpentInput.type = "text";
+            timeSpentInput.placeholder = "Time Spent";
+            cell4.appendChild(timeSpentInput);
+        }
+
+        function clearFields() {
+            document.getElementById("employeeId").value = "";
+            document.getElementById("employeeName").value = "";
+            document.getElementById("datePicker").value = "";
+
+            var table = document.getElementById("activityTable").getElementsByTagName('tbody')[0];
+            table.innerHTML = "";
+        }
+
+        function submitData() {
+            var employeeId = document.getElementById("employeeId").value;
+            var employeeName = document.getElementById("employeeName").value;
+            var datePicker = document.getElementById("datePicker").value;
+
+            if (employeeId && employeeName && datePicker) {
+                var activityTable = document.getElementById("activityTable").getElementsByTagName('tbody')[0];
+
+                // Extracting activity data from the table
+                var activityData = [];
+                for (var i = 0; i < activityTable.rows.length; i++) {
+                    var rowData = [];
+                    for (var j = 0; j < activityTable.rows[i].cells.length; j++) {
+                        var inputField = activityTable.rows[i].cells[j].getElementsByTagName("input")[0];
+                        rowData.push(inputField.value);
+                    }
+                    activityData.push(rowData);
+                }
+
+                // Prepare data to be saved to file
+                var fileContent = `Employee ID: ${employeeId}, Employee Name: ${employeeName}, Date: ${datePicker}\n`;
+                for (var i = 0; i < activityData.length; i++) {
+                    fileContent += `Activity Performed: ${activityData[i][0]}, Client Name: ${activityData[i][1]}, Quantity/Units: ${activityData[i][2]}, Time Spent: ${activityData[i][3]}\n`;
+                }
+
+                // Create a data URL representing the file content
+                var blob = new Blob([fileContent], { type: 'text/plain' });
+                var url = URL.createObjectURL(blob);
+
+                // Initiate download of the file
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'monthlytracker.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Clearing fields after successful submission
+                clearFields();
+                alert("Data submitted successfully!");
+            } else {
+                alert("Please fill in all the employee details.");
+            }
+        }
+
+        function logout() {
+            // Add any additional logout logic if needed
+            window.location.href = 'Index.html'; // Redirect to the login page
+        }
+    </script>
+
+</body>
+</html>

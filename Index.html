@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Login</title>
+    <style>
+        /* Styles remain the same */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        /* Password visibility icon styles */
+        .password-toggle {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .password-toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        /* Style for the logo */
+        .logo {
+            width:320px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Registration note styles */
+        .registration-note {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Logo -->
+        <img src="knowvisory-logo.png" alt="Logo" class="logo">
+
+        <h2>Employee Login</h2>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <div class="password-toggle">
+                <input type="password" id="password" name="password" required>
+                <img src="https://img.icons8.com/material-outlined/24/000000/visible.png" class="password-toggle-icon" onclick="togglePasswordVisibility()">
+            </div>
+
+            <input type="checkbox" id="rememberMe" name="rememberMe">
+            <label for="rememberMe">Remember me</label>
+
+            <button type="button" onclick="validateLogin()">Login</button>
+
+            <p class="error-message" id="errorMessage"></p>
+        </form>
+
+        <!-- Additional buttons -->
+        <button onclick="location.href='signup.html'">Signup</button>
+        <button onclick="forgotPassword()">Forgot Password?</button>
+
+        <!-- Registration note -->
+        <div class="registration-note">
+            <p> Knowvisory Global LLP @2024</p>
+        </div>
+    </div>
+
+<script>
+    function validateLogin() {
+        var enteredUsername = document.getElementById('username').value;
+        var enteredPassword = document.getElementById('password').value;
+        // Make an AJAX request to fetch the CSV file
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'validate.csv', true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // Parse CSV data
+                    var lines = xhr.responseText.split('\n');
+                    var userData = lines.map(function(line) {
+                        var data = line.split(',');
+                        return { username: data[0], password: data[1].trim() }; // Assuming username is in first column and password is in second column
+                    });
+
+                    // Check if entered credentials match any user in the CSV data
+                    var validCredentials = userData.some(function(user) {
+                        return user.username === enteredUsername && user.password === enteredPassword;
+                    });
+
+                    if (validCredentials) {
+                        alert('Login successful!');
+                        // Redirect to a new page
+                        window.location.href = 'dailyTracker.html';
+                    } else {
+                        document.getElementById('errorMessage').innerText = 'Invalid credentials. Please try again.';
+                    }
+                } else {
+                    console.error('Failed to fetch CSV file. Status code: ' + xhr.status);
+                }
+            }
+        };
+        xhr.onerror = function() {
+            console.error('An error occurred during the AJAX request.');
+        };
+        xhr.send();
+    }
+
+    function forgotPassword() {
+        alert('Please contact Admin for password recovery.');
+    }
+
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById('password');
+        var icon = document.querySelector('.password-toggle-icon');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.src = 'https://img.icons8.com/material-outlined/24/000000/invisible.png';
+        } else {
+            passwordInput.type = 'password';
+            icon.src = 'https://img.icons8.com/material-outlined/24/000000/visible.png';
+        }
+    }
+</script>
+</body>
+</html>

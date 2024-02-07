@@ -1,0 +1,130 @@
+<Monthly html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Employee Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 8px;
+            margin-right: 10px;
+        }
+        /* Style for the logo */
+        .logo {
+            width:320px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+            display: block;
+            margin: 0 auto;
+         }
+         h1 {
+            text-align: center;
+         }
+    </style>
+</head>
+<body>
+    <!-- Logo -->
+    <img src="knowvisory-logo.png" alt="Logo" class="logo">
+
+    <h1>Monthly Employee Tracker</h1>
+
+    <button onclick="refreshTable()">Refresh</button>
+    <button onclick="downloadTable()">Download</button>
+    <button onclick="clearTable()">Clear</button>
+
+    <table id="monthlyTracker">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Date</th>
+                <th>Activity Performed</th>
+                <th>Client Name</th>
+                <th>Quantity/Units</th>
+                <th>Time Spent</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Monthly tracker data will be added dynamically here -->
+        </tbody>
+    </table>
+
+    <script>
+        function refreshTable() {
+            var storedData = localStorage.getItem("employeeTrackerData");
+            if (storedData) {
+                var monthlyTrackerTable = document.getElementById("monthlyTracker").getElementsByTagName('tbody')[0];
+                var storedDataArray = JSON.parse(storedData);
+
+                // Clear existing rows in the Monthly Tracker table
+                monthlyTrackerTable.innerHTML = "";
+
+                // Add rows to the Monthly Tracker table with stored data
+                for (var i = 0; i < storedDataArray.length; i++) {
+                    var rowData = storedDataArray[i];
+                    addRowToMonthlyTracker(monthlyTrackerTable, rowData);
+                }
+
+                alert("Monthly Tracker updated!");
+            } else {
+                alert("No data available for Monthly Tracker.");
+            }
+        }
+
+        function downloadTable() {
+            // Implement download logic (e.g., create a CSV or Excel file)
+            alert("Downloading table data...");
+        }
+
+        function clearTable() {
+            var confirmation = confirm("Are you sure you want to clear the table?");
+            if (confirmation) {
+                var monthlyTrackerTable = document.getElementById("monthlyTracker").getElementsByTagName('tbody')[0];
+                monthlyTrackerTable.innerHTML = "";
+            }
+        }
+
+        function addRowToMonthlyTracker(table, rowData) {
+            var newRow = table.insertRow(table.rows.length);
+
+            var keys = ["employeeId", "employeeName", "datePicker"];
+            for (var i = 0; i < keys.length; i++) {
+                var cell = newRow.insertCell(i);
+                cell.innerHTML = rowData[keys[i]];
+            }
+
+            // Activity data
+                 var activityData = rowData.activityData;
+                 for (var j = 0; j < activityData.length; j++) {
+                 var activityRow = activityData[j];
+                 var activityStartIndex = keys.length; // Starting index for activity columns
+
+            // Loop through activity columns
+               for (var k = 0; k < 4; k++) { // Assuming there are always 4 columns for Activity data
+               var cell = newRow.insertCell(activityStartIndex + k);
+              if (activityRow[k] !== undefined) {
+              cell.innerHTML = activityRow[k];
+                   } else {
+             cell.innerHTML = ""; // Filling empty cells if data is not available
+                    }
+                }
+           }
+        }
+    </script>
+</body>
+</html>
